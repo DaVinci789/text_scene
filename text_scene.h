@@ -12,6 +12,8 @@ typedef struct
 
 typedef enum
 {
+    TS_Heading_Nothing,
+    TS_Heading_File_Descriptor,
     TS_Heading_Ext_Resource,
     TS_Heading_Sub_Resource,
     TS_Heading_Node,
@@ -35,9 +37,13 @@ typedef struct
 
 typedef struct
 {
+    struct {
+        char *data;
+        ptrdiff_t len;
+    } source;
     TS_Heading heading;
-    TS_Pair heading_pairs;
-    TS_Pair pairs;
+    TS_Pair *heading_pairs;
+    TS_Pair *pairs;
 
     ptrdiff_t heading_pairs_len;
     ptrdiff_t pairs_len;
@@ -48,17 +54,25 @@ typedef struct
     _Bool ok;
     TS_Chunk *chunks;
     ptrdiff_t chunks_len;
+
+    TS_Pair *all_pairs;
+    ptrdiff_t all_pairs_len;
 } TS_Load_Result;
 
-typedef enum
+typedef struct
 {
-    TS_Save_OK,
-    TS_Save_Error,
+    _Bool ok;
+    char *output;
+    ptrdiff_t output_len;
 } TS_Save_Result;
 
 TS_Load_Result ts_load(char *source);
-TS_Load_Result ts_load1(char *source, TS_Allocator *allocator);
+TS_Load_Result ts_load1(char *source, ptrdiff_t source_len, TS_Allocator *allocator);
 TS_Save_Result ts_save(TS_Chunk *chunks, ptrdiff_t chunks_len, char *savepath);
-TS_Save_Result ts_save1(TS_Chunk *chunks, ptrdiff_t chunks_len, char *savepath, TS_Allocator *allocator);
+TS_Save_Result ts_save1(TS_Chunk *chunks, ptrdiff_t chunks_len, TS_Allocator *allocator);
 
 #endif // TEXT_SCENE_H
+
+#ifdef TS_IMPLEMENTATION
+#include "text_scene.c"
+#endif
